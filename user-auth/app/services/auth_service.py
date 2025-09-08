@@ -29,6 +29,8 @@ def hash_md5(password: str):
     return hashlib.md5(password.encode()).hexdigest()
 
 def authenticate_user(db: Session, username: str, password: str) -> Optional[User]:
+    if User.role == 'user' and len(username) != 10:
+        raise HTTPException(status_code=400, detail="Số điện thoại phải đúng 10 ký tự")
     try:
         hashed_password = hash_md5(password)
         user = db.query(User).filter(
@@ -47,7 +49,10 @@ def create_access_token(user: User):
     payload = {
         "sub": user.username,
         "role": user.role,
-        "email": user.email
+        "email": user.email,
+        "full_name": user.full_name,
+        "department": user.department,
+        "first_login": user.first_login
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm = ALGORITHM)
     return token

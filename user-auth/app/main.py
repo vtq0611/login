@@ -3,8 +3,16 @@ from fastapi import FastAPI
 from app.database import Base, engine
 from app.routes import auth
 from app.models import user as user_model
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # hoặc thay bằng ["http://localhost:3000"] nếu FE chạy ở port 3000
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 #base.metadata là các bảng được định nghĩa bằng models
 Base.metadata.create_all(bind=engine)
